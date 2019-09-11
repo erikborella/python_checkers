@@ -1,0 +1,32 @@
+CREATE TABLE IF NOT EXISTS user (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(10000) NOT NULL,
+    wins INTEGER NOT NULL,
+    loses INTEGER NOT NULL,
+    draws INTEGER NOT NULL,
+    icon INTEGER NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS room (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    password VARCHAR(10000) NOT NULL,
+    board VARCHAR(500) NOT NULL,
+    turn INTEGER NOT NULL,
+    user1_id INTEGER NOT NULL,
+    user2_id INTEGER NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user1_id) REFERENCES user(id),
+    FOREIGN KEY (user2_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS message (
+    id INTEGER NOT NULL,
+    message VARCHAR(1000) NOT NULL,
+    user_id INTEGER NOT NULL,
+    room_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (room_id) REFERENCES room(id)
+);
