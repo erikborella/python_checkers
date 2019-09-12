@@ -76,3 +76,12 @@ class Database(object):
             cursor.execute(sql, id)
             user = cursor.fetchone()
         return user
+
+    def create_room(self, name, password, board, user_id):
+        sql = "INSERT INTO room(name, password, board, turn, user1_id) VALUES (%s, %s, %s, %s, %s)"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, (name, password, board, 1, user_id))
+            id = cursor.lastrowid
+        self.con.commit()
+        return id
+

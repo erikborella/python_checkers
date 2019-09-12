@@ -33,10 +33,14 @@ def send_not_logged():
     return {'status': False, 'message': 'not logged'}
 
 
+def is_logged():
+    return 'logged_in' in session
+
+
 class Session(Resource):
 
     def get(self):
-        if 'logged_in' in session:
+        if is_logged():
             user = Database().get_user_by_id(session['id'])
             return {'status': True, 'user': user}
         else:
@@ -90,10 +94,29 @@ class Logout(Resource):
         return {'status': True}
 
 
+class Room(Resource):
+
+    def post(self):
+        name = request.form['name']
+        password = request.form['password']
+        if is_logged():
+            user_id = session['id']
+            if name and password:
+                password = hash_string(password)
+                id = Database().create_room(name, password, 1, user_id)
+                return {'status': True, 'room_id': id}
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
 api.add_resource(Session, '/api/session')
 api.add_resource(Signup, '/api/session/signup')
 api.add_resource(Login, '/api/session/login')
 api.add_resource(Logout, '/api/session/logout')
+
+api.add_resource(Room, '/api/room')
 
 if __name__ == '__main__':
     app.run()

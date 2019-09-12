@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS room (
     board VARCHAR(500) NOT NULL,
     turn INTEGER NOT NULL,
     user1_id INTEGER NOT NULL,
-    user2_id INTEGER NOT NULL,
+    user2_id INTEGER,
     PRIMARY KEY (id),
     FOREIGN KEY (user1_id) REFERENCES user(id),
     FOREIGN KEY (user2_id) REFERENCES user(id)
