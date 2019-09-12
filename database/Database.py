@@ -2,7 +2,7 @@ import pymysql
 import sys
 
 
-class Database:
+class Database(object):
 
     def __init__(self):
 
@@ -48,3 +48,32 @@ class Database:
             else:
                 stmts.append(line.strip())
         return stmts
+
+    def create_user(self, username, password, icon):
+        sql = "INSERT INTO user(username, password, wins, loses, draws, icon) VALUES (%s, %s, %s, %s, %s, %s)"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, (username, password, 0, 0, 0, icon))
+            id = cursor.lastrowid
+        self.con.commit()
+        return id
+
+    def get_users(self):
+        sql = "SELECT * FROM user"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql)
+            users = cursor.fetchall()
+        return users
+
+    def get_user(self, username, password):
+        sql = "SELECT * FROM user WHERE username = %s and password = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, (username, password))
+            user = cursor.fetchone()
+        return user
+
+    def get_user_by_id(self, id):
+        sql = "SELECT * FROM user WHERE id=%s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, id)
+            user = cursor.fetchone()
+        return user
