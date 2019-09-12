@@ -85,3 +85,25 @@ class Database(object):
         self.con.commit()
         return id
 
+    def get_room(self, room_id):
+        sql = "SELECT * FROM room WHERE id = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, room_id)
+            room = cursor.fetchone()
+        return room
+
+    def add_user_in_room(self, room_id, room_password, user_id):
+        room = self.get_room(room_id)
+        print(room)
+        if room_id is None:
+            if room['password'] == room_password:
+                sql = "UPDATE room SET user2_id = %s WHERE id = %s"
+                with self.con.cursor() as cursor:
+                    cursor.execute(sql, (user_id, room_id))
+                self.con.commit()
+                return {'status': True}
+            else:
+                return {'status': False, 'message': 'Password incorect'}
+        else:
+            return {'status': False, 'message': 'Room not find'}
+

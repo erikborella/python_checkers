@@ -111,12 +111,33 @@ class Room(Resource):
             return send_not_logged()
 
 
+class Enter_room(Resource):
+
+    def post(self):
+        room_id = request.form['room_id']
+        password = request.form['password']
+        if is_logged():
+            user_id = session['id']
+            if room_id and password:
+                password = hash_string(password)
+
+                status = Database().add_user_in_room(room_id, password, user_id)
+
+                return status
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
+
 api.add_resource(Session, '/api/session')
 api.add_resource(Signup, '/api/session/signup')
 api.add_resource(Login, '/api/session/login')
 api.add_resource(Logout, '/api/session/logout')
 
 api.add_resource(Room, '/api/room')
+api.add_resource(Enter_room, '/api/room/enter')
 
 if __name__ == '__main__':
     app.run()
