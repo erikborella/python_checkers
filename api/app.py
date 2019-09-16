@@ -51,6 +51,32 @@ def get_messages(room_id):
         message['username'] = get_username_by_id(user_list, message['user_id'])
     return messages
 
+
+def create_board(board_size=8):
+    board = []
+    board_size = int(board_size)
+
+    if board_size % 2 != 0:
+        raise Exception("The board size need to be a pair number")
+
+    number_of_pieces = ((board_size ** 2) - (board_size * 2)) / 4
+    number_of_pieces = int(number_of_pieces)
+    print(number_of_pieces)
+
+    for i in range(board_size ** 2):
+        board.append(0)
+
+    for i in range(number_of_pieces * 2):
+        if i % 2 == 0:
+            board[i] = 1
+
+    for i in range(number_of_pieces * 2):
+        if i % 2 == 0:
+            board[-i-1] = -1
+
+    return board
+
+
 class Session(Resource):
 
     def get(self):
@@ -113,11 +139,17 @@ class Room(Resource):
     def post(self):
         name = request.form['name']
         password = request.form['password']
+        board_size = request.form['board_size']
+
+        if not board_size:
+            board_size = 2
+
         if is_logged():
             user_id = session['id']
             if name and password:
                 password = hash_string(password)
-                id = Database().create_room(name, password, 1, user_id)
+                board = str(create_board(board_size))
+                id = Database().create_room(name, password, board, user_id)
                 return {'status': True, 'room_id': id}
             else:
                 return send_invalid_form()
