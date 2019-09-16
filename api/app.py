@@ -37,6 +37,20 @@ def is_logged():
     return 'logged_in' in session
 
 
+def get_username_by_id(user_list, id):
+    for user in user_list:
+        if user['id'] == id:
+            return user['username']
+    return None
+
+
+def get_messages(room_id):
+    user_list = Database().get_users()
+    messages = Database().get_group_message(room_id)
+    for message in messages:
+        message['username'] = get_username_by_id(user_list, message['user_id'])
+    return messages
+
 class Session(Resource):
 
     def get(self):
@@ -154,7 +168,7 @@ class GetMessage(Resource):
 
         if is_logged():
             if room_id:
-                messages = Database().get_group_message(room_id)
+                messages = get_messages(room_id)
                 return {'status': True, 'messages': messages}
             else:
                 return send_invalid_form()

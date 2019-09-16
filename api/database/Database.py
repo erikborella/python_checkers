@@ -116,7 +116,7 @@ class Database(object):
         return id
 
     def get_group_message(self, room_id):
-        sql = "SELECT * FROM message WHERE room_id = %s"
+        sql = "SELECT user_id, message FROM message WHERE room_id = %s"
         with self.con.cursor() as cursor:
             cursor.execute(sql, room_id)
             rooms = cursor.fetchall()
