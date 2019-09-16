@@ -23,10 +23,11 @@ CREATE TABLE IF NOT EXISTS room (
 );
 
 CREATE TABLE IF NOT EXISTS message (
-    id INTEGER NOT NULL,
+    id INTEGER NOT NULL AUTO_INCREMENT,
     message VARCHAR(1000) NOT NULL,
     user_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (room_id) REFERENCES room(id)
 );

@@ -107,3 +107,17 @@ class Database(object):
         else:
             return {'status': False, 'message': 'Room not find'}
 
+    def add_message(self, user_id, room_id, message):
+        sql = "INSERT INTO message(user_id, room_id, message) VALUES (%s, %s, %s)"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, (user_id, room_id,  message))
+            id = cursor.lastrowid
+        self.con.commit()
+        return id
+
+    def get_group_message(self, room_id):
+        sql = "SELECT * FROM message WHERE room_id = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, room_id)
+            rooms = cursor.fetchall()
+        return rooms

@@ -111,7 +111,7 @@ class Room(Resource):
             return send_not_logged()
 
 
-class Enter_room(Resource):
+class EnterRoom(Resource):
 
     def post(self):
         room_id = request.form['room_id']
@@ -130,6 +130,37 @@ class Enter_room(Resource):
             return send_not_logged()
 
 
+class SendMessage(Resource):
+
+    def post(self):
+        room_id = request.form['room_id']
+        message = request.form['message']
+
+        if is_logged():
+            user_id = session['id']
+            if room_id and message:
+                Database().add_message(user_id, room_id, message)
+                return {'status': True}
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
+class GetMessage(Resource):
+
+    def post(self):
+        room_id = request.form['room_id']
+
+        if is_logged():
+            if room_id:
+                messages = Database().get_group_message(room_id)
+                return {'status': True, 'messages': messages}
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
 
 api.add_resource(Session, '/api/session')
 api.add_resource(Signup, '/api/session/signup')
@@ -137,7 +168,11 @@ api.add_resource(Login, '/api/session/login')
 api.add_resource(Logout, '/api/session/logout')
 
 api.add_resource(Room, '/api/room')
-api.add_resource(Enter_room, '/api/room/enter')
+api.add_resource(EnterRoom, '/api/room/enter')
+
+api.add_resource(SendMessage, '/api/chat/send')
+api.add_resource(GetMessage, '/api/chat')
+
 
 if __name__ == '__main__':
     app.run()
