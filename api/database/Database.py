@@ -85,6 +85,17 @@ class Database(object):
         self.con.commit()
         return id
 
+    def get_rooms(self):
+        sql = "SELECT * FROM room"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql)
+            rooms = cursor.fetchall()
+
+        for room in rooms:
+            del room['password']
+
+        return rooms
+
     def get_room(self, room_id):
         sql = "SELECT * FROM room WHERE id = %s"
         with self.con.cursor() as cursor:

@@ -4,6 +4,8 @@ from flask_cors import CORS
 
 from api.database.Database import Database
 
+import math
+
 import hashlib
 
 app = Flask(__name__)
@@ -80,8 +82,42 @@ def create_board(board_size=8):
 def arr_to_str(arr: list) -> str:
     string = ''
     for i in arr:
+        if i == -1:
+            i = 3
+        elif i == -2:
+            i = 4
+
         string = string + str(i)
     return string
+
+
+def str_to_arr(string: str) -> list:
+    arr: list = []
+    for char in string:
+        if char == '3':
+            char = -1
+        elif char == '4':
+            char = -2
+        else:
+            char = int(char)
+        arr.append(char)
+
+    return arr
+
+
+def arr_to_matrix(arr: list) -> list:
+    row_size = int(math.sqrt(len(arr)))
+    matrix: list = []
+    counter = 0
+
+    for i in range(row_size):
+        pre_arr: list = []
+        for j in range(row_size):
+            pre_arr.append(arr[counter])
+            counter += 1
+        matrix.append(pre_arr)
+
+    return matrix
 
 
 class Session(Resource):
@@ -149,7 +185,7 @@ class Room(Resource):
         board_size = request.form['board_size']
 
         if not board_size:
-            board_size = 2
+            board_size = 8
 
         if is_logged():
             user_id = session['id']
@@ -183,7 +219,17 @@ class EnterRoom(Resource):
             return send_not_logged()
 
 
-# class GetRoom(Resource):
+class GetRoom(Resource):
+
+    def get(self):
+        if is_logged():
+            rooms = Database().get_rooms()
+            for room in rooms:
+                room['board'] = arr_to_matrix(str_to_arr(room['board']))
+
+            return {'status': True, 'rooms': rooms}
+        else:
+            return send_not_logged()
 
 
 class SendMessage(Resource):
@@ -225,7 +271,7 @@ api.add_resource(Logout, '/api/session/logout')
 
 api.add_resource(Room, '/api/room')
 api.add_resource(EnterRoom, '/api/room/enter')
-# api.add_resource(GetRoom, '/api/room/get')
+api.add_resource(GetRoom, '/api/room/get')
 
 api.add_resource(SendMessage, '/api/chat/send')
 api.add_resource(GetMessage, '/api/chat')
