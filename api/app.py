@@ -77,6 +77,13 @@ def create_board(board_size=8):
     return board
 
 
+def arr_to_str(arr: list) -> str:
+    string = ''
+    for i in arr:
+        string = string + str(i)
+    return string
+
+
 class Session(Resource):
 
     def get(self):
@@ -148,7 +155,7 @@ class Room(Resource):
             user_id = session['id']
             if name and password:
                 password = hash_string(password)
-                board = str(create_board(board_size))
+                board = arr_to_str(create_board(board_size))
                 id = Database().create_room(name, password, board, user_id)
                 return {'status': True, 'room_id': id}
             else:
@@ -174,6 +181,9 @@ class EnterRoom(Resource):
                 return send_invalid_form()
         else:
             return send_not_logged()
+
+
+# class GetRoom(Resource):
 
 
 class SendMessage(Resource):
@@ -215,6 +225,7 @@ api.add_resource(Logout, '/api/session/logout')
 
 api.add_resource(Room, '/api/room')
 api.add_resource(EnterRoom, '/api/room/enter')
+# api.add_resource(GetRoom, '/api/room/get')
 
 api.add_resource(SendMessage, '/api/chat/send')
 api.add_resource(GetMessage, '/api/chat')

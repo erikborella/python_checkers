@@ -94,16 +94,23 @@ class Database(object):
 
     def add_user_in_room(self, room_id, room_password, user_id):
         room = self.get_room(room_id)
-        print(room)
-        if room_id is None:
+        if room_id is not None:
+            if room['user2_id']:
+                return {'status': False, 'message': 'Already have a user playing in this room'}
+
+            if user_id == room['user1_id']:
+                return {'status': False, 'message': 'You cannot play with yourself'}
+
             if room['password'] == room_password:
                 sql = "UPDATE room SET user2_id = %s WHERE id = %s"
                 with self.con.cursor() as cursor:
                     cursor.execute(sql, (user_id, room_id))
                 self.con.commit()
                 return {'status': True}
+
             else:
                 return {'status': False, 'message': 'Password incorect'}
+
         else:
             return {'status': False, 'message': 'Room not find'}
 
