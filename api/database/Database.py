@@ -96,6 +96,14 @@ class Database(object):
 
         return rooms
 
+    def delete_room(self, room_id):
+        self.delete_group_message(room_id)
+        sql = "DELETE FROM room WHERE id = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, room_id)
+        self.con.commit()
+        return True
+
     def get_room(self, room_id):
         sql = "SELECT * FROM room WHERE id = %s"
         with self.con.cursor() as cursor:
@@ -132,6 +140,13 @@ class Database(object):
             id = cursor.lastrowid
         self.con.commit()
         return id
+
+    def delete_group_message(self, room_id):
+        sql = "DELETE FROM message WHERE room_id = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, room_id)
+        self.con.commit()
+        return True
 
     def get_group_message(self, room_id):
         sql = "SELECT user_id, message FROM message WHERE room_id = %s"

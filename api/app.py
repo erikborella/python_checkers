@@ -232,6 +232,21 @@ class GetRoom(Resource):
             return send_not_logged()
 
 
+class DeleteRoom(Resource):
+
+    def post(self):
+        room_id = request.form['room_id']
+
+        if is_logged():
+            if room_id:
+                Database().delete_room(room_id)
+                return {'status': True}
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
 class SendMessage(Resource):
 
     def post(self):
@@ -272,6 +287,7 @@ api.add_resource(Logout, '/api/session/logout')
 api.add_resource(Room, '/api/room')
 api.add_resource(EnterRoom, '/api/room/enter')
 api.add_resource(GetRoom, '/api/room/get')
+api.add_resource(DeleteRoom, '/api/room/delete')
 
 api.add_resource(SendMessage, '/api/chat/send')
 api.add_resource(GetMessage, '/api/chat')
