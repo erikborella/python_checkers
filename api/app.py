@@ -231,6 +231,26 @@ class GetRoom(Resource):
         else:
             return send_not_logged()
 
+    def post(self):
+        room_id = request.form['room_id']
+
+        if is_logged():
+            user_id = session['id']
+            if room_id:
+                room = Database().get_room(room_id)
+                room['board'] = arr_to_matrix(str_to_arr(room['board']))
+
+                # Auto reverse the board for the second player
+                if user_id == room['user2_id']:
+                    room['board'] = room['board'][::-1]
+
+                del room['password']
+                return {'status': True, 'room': room}
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
 
 class DeleteRoom(Resource):
 
