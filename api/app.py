@@ -120,6 +120,41 @@ def arr_to_matrix(arr: list) -> list:
     return matrix
 
 
+def check_valid_position(row: int, col: int, board: list) -> bool:
+    board_size = len(board)
+
+    if row < 0 or row >= board_size:
+        return False
+
+    if col < 0 or col >= board_size:
+        return False
+
+    return True
+
+
+def check_valid_movement(row: int, col: int, board: list) -> bool:
+    is_dama = True if (board[row][col] == 2 or board[row][col] == -2) else False
+
+    if check_valid_position(row - 1, col - 1, board):
+        if board[row - 1][col - 1] == 0:
+            return True
+
+    if check_valid_position(row - 1, col + 1, board):
+        if board[row - 1][col + 1] == 0:
+            return True
+
+    if is_dama:
+        if check_valid_position(row + 1, col - 1, board):
+            if board[row + 1][col - 1] == 0:
+                return True
+
+        if check_valid_position(row + 1, col + 1, board):
+            if board[row + 1][col + 1] == 0:
+                return True
+            
+    return False
+
+
 class Session(Resource):
 
     def get(self):
@@ -299,6 +334,41 @@ class GetMessage(Resource):
             return send_not_logged()
 
 
+class GetPossibleMovements(Resource):
+
+    def post(self):
+        row = request.form['row']
+        col = request.form['col']
+        room_id = request.form['room_id']
+
+        if is_logged():
+            user_id = session['id']
+            if row and col and room_id:
+                row = int(row)
+                col = int(col)
+                room = Database().get_room(room_id)
+                if user_id != room['user1_id'] and user_id != room['user2_id']:
+                    return {'status': False, 'message': "you"}
+
+                board: list = arr_to_matrix(str_to_arr(room['board']))
+
+                if user_id == room['user2_id']:
+                    board = board[::-1]
+
+                if board[row][col] == 0:
+                    return {'status': False, 'message': "You don't select a piece"}
+
+                if check_valid_movement(row, col, board):
+                    pass
+                else:
+                    return {'status': False, 'message': 'no movement possible'}
+
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
 api.add_resource(Session, '/api/session')
 api.add_resource(Signup, '/api/session/signup')
 api.add_resource(Login, '/api/session/login')
@@ -311,6 +381,8 @@ api.add_resource(DeleteRoom, '/api/room/delete')
 
 api.add_resource(SendMessage, '/api/chat/send')
 api.add_resource(GetMessage, '/api/chat')
+
+api.add_resource(GetPossibleMovements, '/api/game/movements')
 
 
 if __name__ == '__main__':
