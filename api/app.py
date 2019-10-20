@@ -2,7 +2,7 @@ from flask import Flask, session, request
 from flask_restful import Resource, Api
 from flask_cors import CORS
 
-from api.database.Database import Database
+from database.Database import Database
 
 import math
 
@@ -133,7 +133,8 @@ def check_valid_position(row: int, col: int, board: list) -> bool:
 
 
 def check_valid_movement(row: int, col: int, board: list) -> bool:
-    is_dama = True if (board[row][col] == 2 or board[row][col] == -2) else False
+    is_dama = True if (board[row][col] ==
+                       2 or board[row][col] == -2) else False
 
     if check_valid_position(row - 1, col - 1, board):
         if board[row - 1][col - 1] == 0:
@@ -151,7 +152,7 @@ def check_valid_movement(row: int, col: int, board: list) -> bool:
         if check_valid_position(row + 1, col + 1, board):
             if board[row + 1][col + 1] == 0:
                 return True
-            
+
     return False
 
 
@@ -180,7 +181,7 @@ class Signup(Resource):
                 session['id'] = id
                 return {'status': True}
             else:
-                return {'status': False, 'message':'user alredy exist'}
+                return {'status': False, 'message': 'user alredy exist'}
         else:
             return send_invalid_form()
 
