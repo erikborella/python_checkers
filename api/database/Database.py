@@ -13,7 +13,7 @@ class Database(object):
         self.con = pymysql.connect(host=host, user=user, password=password, db=db,
                                    cursorclass=pymysql.cursors.DictCursor)
 
-        sqls = self.parse_sql('api/database/sql.sql')
+        sqls = self.parse_sql('database/sql.sql')
 
         with self.con.cursor() as cursor:
             for sql in sqls:
