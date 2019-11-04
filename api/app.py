@@ -132,28 +132,41 @@ def check_valid_position(row: int, col: int, board: list) -> bool:
     return True
 
 
-def check_valid_movement(row: int, col: int, board: list) -> bool:
+def check_valid_movement(row: int, col: int, board: list) -> list:
+    movements: list = []
     is_dama = True if (board[row][col] ==
                        2 or board[row][col] == -2) else False
 
-    if check_valid_position(row - 1, col - 1, board):
-        if board[row - 1][col - 1] == 0:
-            return True
+    if check_valid_position(row+1, col-1, board):
+        if board[row+1][col-1] == 0:
+            movements.append({"row": row+1, "col": col-1})
+        else:
+            if check_valid_position(row+2, col-2, board):
+                movements.append({"row": row+2, "col": col-2})
 
-    if check_valid_position(row - 1, col + 1, board):
-        if board[row - 1][col + 1] == 0:
-            return True
+    if check_valid_position(row+1, col+1, board):
+        if board[row+1][col-1] == 0:
+            movements.append({"row": row+1, "col": col+1})
+        else:
+            if check_valid_position(row+2, col-2, board):
+                movements.append({"row": row+2, "col": col+2})
 
     if is_dama:
-        if check_valid_position(row + 1, col - 1, board):
-            if board[row + 1][col - 1] == 0:
-                return True
+        if check_valid_position(row-1, col-1, board):
+            if board[row-1][col-1] == 0:
+                movements.append({"row": row-1, "col": col-1})
+            else:
+                if check_valid_position(row-2, col-2, board):
+                    movements.append({"row": row-2, "col": col-2})
 
-        if check_valid_position(row + 1, col + 1, board):
-            if board[row + 1][col + 1] == 0:
-                return True
+        if check_valid_position(row-1, col+1, board):
+            if board[row-1][col-1] == 0:
+                movements.append({"row": row-1, "col": col+1})
+            else:
+                if check_valid_position(row-2, col-2, board):
+                    movements.append({"row": row-2, "col": col+2})
 
-    return False
+    return movements
 
 
 class Session(Resource):
@@ -359,10 +372,65 @@ class GetPossibleMovements(Resource):
                 if board[row][col] == 0:
                     return {'status': False, 'message': "You don't select a piece"}
 
-                if check_valid_movement(row, col, board):
-                    pass
-                else:
-                    return {'status': False, 'message': 'no movement possible'}
+                movements = check_valid_movement(row, col, board)
+
+                session['piece_selected'] = {'col': col, 'row': row}
+                session['movements'] = movements
+
+                return {'status': True, 'movements': movements}
+
+            else:
+                return send_invalid_form()
+        else:
+            return send_not_logged()
+
+
+class Play(Resource):
+    def post(self):
+        row = request.form['row']
+        col = request.form['col']
+        room_id = request.form['room_id']
+
+        if is_logged():
+            user_id = session['id']
+            if row and col and room_id:
+                row = int(row)
+                col = int(col)
+                room = Database().get_room(room_id)
+                if user_id != room['user1_id'] and user_id != room['user2_id']:
+                    return {'status': False, 'message': "you"}
+
+                board: list = arr_to_matrix(str_to_arr(room['board']))
+
+                if user_id == room['user2_id']:
+                    board = board[::-1]
+                    if room['turn'] == 1:
+                        return {'status': False, 'message': 'Is not your time to move'}
+
+                if not 'piece_selected' in session:
+                    return {'status': False, 'message': "You need to select a piece"}
+
+                select_row = int(session['piece_selected']['row'])
+                select_col = int(session['piece_selected']['col'])
+
+                moved = False
+
+                for moves in session['movements']:
+                    if moves['row'] == row and moves['col'] == col:
+                        piece = board[select_row][select_col]
+                        board[select_row][select_col] = 0
+                        board[row][col] = piece
+                        moved = True
+                        break
+
+                if moved:
+                    room['turn'] = room['turn'] * -1
+
+                room['board'] = board
+
+                print(room)
+
+                return {'status': moved}
 
             else:
                 return send_invalid_form()
@@ -384,7 +452,8 @@ api.add_resource(SendMessage, '/api/chat/send')
 api.add_resource(GetMessage, '/api/chat')
 
 api.add_resource(GetPossibleMovements, '/api/game/movements')
+api.add_resource(Play, '/api/game/play')
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
