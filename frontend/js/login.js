@@ -54,7 +54,7 @@ function login(username, password) {
 
 function handleLoginErros(apiResult) {
     if (apiResult.status) {
-
+        window.location.replace("lobby.html");
     } else {
         M.toast({ html: apiResult.message })
     }

@@ -55,7 +55,7 @@ function signup(username, password) {
 
 function handleSignupErros(apiResult) {
     if (apiResult.status) {
-
+        window.location.replace("lobby.html");
     } else {
         M.toast({ html: apiResult.message })
     }

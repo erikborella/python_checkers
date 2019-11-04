@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../css/materialize.min.css" media="screen,projection" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lobby</title>
+</head>
+
+<body>
+
+    <header>
+        <nav class="black">
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo">Cadastrar</a>
+                <ul class="right ">
+                    <li id="btn-sair"><a href="#">Sair</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container" id="rooms-list">
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="fixed-action-btn" id="btn-create-room">
+            <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+        </div>
+    </footer>
+
+    <modals>
+
+        <div id="modal-create-room" class="modal">
+            <div class="modal-content">
+                <h4>Criar Sala</h4>
+                <div class="row">
+                    <div class="input-field col s6 offset-s3 center-align">
+                        <input type="text" name="room-name" id="input-create-room-name">
+                        <label for="input-create-room-name">Nome da sala</label>
+                    </div>
+
+                    <div class="input-field col s6 offset-s3 center-align">
+                        <input type="password" name="password" id="input-create-password">
+                        <label for="input-create-password">Senha</label>
+                    </div>
+
+                    <div class="input-field col s6 offset-s3 center-align">
+                        <input type="number" name="board-size" id="input-create-board-size">
+                        <label for="input-create-board-size">Tamanho do tabuleiro(deve ser um numero par)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" id="modal-btn-create-room" class="modal-close waves-effect waves-green btn-flat">Criar</a>
+            </div>
+        </div>
+
+        <div id="modal-enter-room" class="modal">
+            <div class="modal-content">
+                <h4>Criar Sala</h4>
+                <div class="row">
+
+                    <div class="input-field col s6 offset-s3 center-align">
+                        <input placeholder="id da sala" type="text" name="room-id" id="input-enter-room-id" disabled>
+                    </div>
+
+                    <div class="input-field col s6 offset-s3 center-align">
+                        <input type="password" name="password" id="input-enter-room-password">
+                        <label for="input-enter-room-password">Senha</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" id="modal-btn-enter-room" class="modal-close waves-effect waves-green btn-flat">Entrar</a>
+            </div>
+        </div>
+
+    </modals>
+
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/materialize.min.js"></script>
+
+    <script type="text/javascript" src="../js/const.js"></script>
+    <script type="text/javascript" src="../js/lobby.js"></script>
+
+</body>
+
+</html>
