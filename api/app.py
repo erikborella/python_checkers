@@ -68,6 +68,52 @@ def create_board(board_size=8):
     for i in range(board_size ** 2):
         board.append(0)
 
+    i = 0
+    last = 1
+    counter = -1
+    put: bool = True
+    while counter <= number_of_pieces:
+
+        if i % board_size == 0 and i != 0:
+            board[i] = last
+            counter += 1
+            i += 1
+            continue
+
+        if put:
+            board[i] = 1
+            counter += 1
+            last = 1
+            put = False
+        else:
+            put = True
+            last = 0
+
+        i += 1
+
+    i = 0
+    last = -1
+    counter = -1
+    put: bool = True
+    while counter <= number_of_pieces:
+
+        if i % board_size == 0 and i != 0:
+            board[-i-1] = last
+            counter += 1
+            i += 1
+            continue
+
+        if put:
+            board[-i-1] = -1
+            counter += 1
+            last = -1
+            put = False
+        else:
+            put = True
+            last = 0
+
+        i += 1
+
     return board
 
 
