@@ -172,6 +172,7 @@ def check_valid_position(row: int, col: int, board: list) -> bool:
 
 def check_valid_movement(row: int, col: int, board: list) -> list:
     movements: list = []
+    piece = board[row][col]
     is_dama = True if (board[row][col] ==
                        2 or board[row][col] == -2) else False
 
@@ -180,14 +181,16 @@ def check_valid_movement(row: int, col: int, board: list) -> list:
             movements.append({"row": row-1, "col": col-1})
         else:
             if check_valid_position(row-2, col-2, board):
-                movements.append({"row": row-2, "col": col-2})
+                if board[row-1][col-1] != piece:
+                    movements.append({"row": row-2, "col": col-2})
 
     if check_valid_position(row-1, col+1, board):
         if board[row-1][col-1] == 0:
             movements.append({"row": row-1, "col": col+1})
         else:
-            if check_valid_position(row-2, col-2, board):
-                movements.append({"row": row-2, "col": col+2})
+            if check_valid_position(row-2, col+2, board):
+                if board[row-1][col+1] != piece:
+                    movements.append({"row": row-2, "col": col+2})
 
     if is_dama:
         if check_valid_position(row+1, col-1, board):
