@@ -175,34 +175,34 @@ def check_valid_movement(row: int, col: int, board: list) -> list:
     is_dama = True if (board[row][col] ==
                        2 or board[row][col] == -2) else False
 
-    if check_valid_position(row+1, col-1, board):
-        if board[row+1][col-1] == 0:
-            movements.append({"row": row+1, "col": col-1})
+    if check_valid_position(row-1, col-1, board):
+        if board[row-1][col-1] == 0:
+            movements.append({"row": row-1, "col": col-1})
         else:
-            if check_valid_position(row+2, col-2, board):
-                movements.append({"row": row+2, "col": col-2})
+            if check_valid_position(row-2, col-2, board):
+                movements.append({"row": row-2, "col": col-2})
 
-    if check_valid_position(row+1, col+1, board):
-        if board[row+1][col-1] == 0:
-            movements.append({"row": row+1, "col": col+1})
+    if check_valid_position(row-1, col+1, board):
+        if board[row-1][col-1] == 0:
+            movements.append({"row": row-1, "col": col+1})
         else:
-            if check_valid_position(row+2, col-2, board):
-                movements.append({"row": row+2, "col": col+2})
+            if check_valid_position(row-2, col-2, board):
+                movements.append({"row": row-2, "col": col+2})
 
     if is_dama:
-        if check_valid_position(row-1, col-1, board):
-            if board[row-1][col-1] == 0:
-                movements.append({"row": row-1, "col": col-1})
+        if check_valid_position(row+1, col-1, board):
+            if board[row+1][col-1] == 0:
+                movements.append({"row": row+1, "col": col-1})
             else:
-                if check_valid_position(row-2, col-2, board):
-                    movements.append({"row": row-2, "col": col-2})
+                if check_valid_position(row+2, col-2, board):
+                    movements.append({"row": row+2, "col": col-2})
 
-        if check_valid_position(row-1, col+1, board):
-            if board[row-1][col-1] == 0:
-                movements.append({"row": row-1, "col": col+1})
+        if check_valid_position(row+1, col+1, board):
+            if board[row+1][col-1] == 0:
+                movements.append({"row": row+1, "col": col+1})
             else:
-                if check_valid_position(row-2, col-2, board):
-                    movements.append({"row": row-2, "col": col+2})
+                if check_valid_position(row+2, col-2, board):
+                    movements.append({"row": row+2, "col": col+2})
 
     return movements
 
