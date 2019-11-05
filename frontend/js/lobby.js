@@ -2,7 +2,6 @@ let user = null;
 
 $(document).ready(() => {
     checkIfIsLogged();
-    loadRooms();
     $('.modal').modal();
 });
 
@@ -68,7 +67,7 @@ $("body").on("click", ".btn-room", function () {
     if (enterType === "enter") {
         openModalEnterInARoom(roomId);
     } else {
-        //TODO
+        redictToGame(roomId);
     }
 });
 
@@ -106,6 +105,7 @@ function checkIfIsLogged() {
                 redictToLogin();
             } else {
                 user = result.user;
+                loadRooms();
             }
         }
     });
@@ -140,12 +140,16 @@ function renderRooms(rooms) {
         return false;
     }
 
-    let html = "";
+    let html = ""; const getBoardSize = (room) => room.board;
+
 
     for (const room of rooms) {
+        console.log(room);
+
         html += `<div class="card black">`;
         html += `<div class="card-content white-text">`;
         html += `<span class="card-title">${room.name}</span>`;
+        html += `<p>Tamanho do tabuleiro = ${room.board.length}X${room.board.length}</p>`
         html += `</div>`;
         html += `<div class="card-action">`;
         if (checkIfIPlayTheRoom(room)) {
@@ -229,8 +233,7 @@ function enterInARoom(roomId, password) {
             } else {
                 const html = "Voce entrou na sala com sucesso";
                 M.toast({ html: html });
-                //TODO
-                loadRooms();
+                redictToGame(roomId);
             }
         }
 
@@ -239,4 +242,12 @@ function enterInARoom(roomId, password) {
 
 function redictToLogin() {
     window.location.replace("login.html");
+}
+
+/**
+ * Go to the game scream
+ * @param {number} id 
+ */
+function redictToGame(id) {
+    window.location.replace(`game.html?id=${id}`);
 }

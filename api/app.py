@@ -68,14 +68,6 @@ def create_board(board_size=8):
     for i in range(board_size ** 2):
         board.append(0)
 
-    for i in range(number_of_pieces * 2):
-        if i % 2 == 0:
-            board[i] = 1
-
-    for i in range(number_of_pieces * 2):
-        if i % 2 == 0:
-            board[-i-1] = -1
-
     return board
 
 
@@ -294,6 +286,7 @@ class GetRoom(Resource):
                     room['board'] = room['board'][::-1]
 
                 del room['password']
+
                 return {'status': True, 'room': room}
             else:
                 return send_invalid_form()
