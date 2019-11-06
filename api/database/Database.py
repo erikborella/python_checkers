@@ -104,6 +104,12 @@ class Database(object):
         self.con.commit()
         return True
 
+    def update_room_board(self, room_id, board):
+        sql = "UPDATE room SET board = %s WHERE id = %s"
+        with self.con.cursor() as cursor:
+            cursor.execute(sql, (board, room_id))
+        return True
+
     def get_room(self, room_id):
         sql = "SELECT * FROM room WHERE id = %s"
         with self.con.cursor() as cursor:

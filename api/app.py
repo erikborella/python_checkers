@@ -1,6 +1,7 @@
 from flask import Flask, session, request
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from flask_socketio import SocketIO
 
 from database.Database import Database
 
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = "MAZZUTTI"
 CORS(app, supports_credentials=True)
 api = Api(app)
+socket = SocketIO(app)
 
 
 def hash_string(string):
@@ -156,6 +158,16 @@ def arr_to_matrix(arr: list) -> list:
         matrix.append(pre_arr)
 
     return matrix
+
+
+def matrix_to_arr(arr: list) -> list:
+    new_arr: list = []
+
+    for i in arr:
+        for j in i:
+            new_arr.append(j)
+
+    return new_arr
 
 
 def check_valid_position(row: int, col: int, board: list) -> bool:
@@ -468,9 +480,7 @@ class Play(Resource):
                 if moved:
                     room['turn'] = room['turn'] * -1
 
-                room['board'] = board
-
-                print(room)
+                Database().update_room_board(room['id'], arr_to_str(board))
 
                 return {'status': moved}
 
@@ -498,4 +508,4 @@ api.add_resource(Play, '/api/game/play')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    socket.run(app, host='0.0.0.0')
