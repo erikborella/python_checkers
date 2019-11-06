@@ -314,6 +314,8 @@ class EnterRoom(Resource):
 
                 status = Database().add_user_in_room(room_id, password, user_id)
 
+                socket.emit('enter', {'room_id': room_id})
+
                 return status
             else:
                 return send_invalid_form()
@@ -380,6 +382,7 @@ class SendMessage(Resource):
             user_id = session['id']
             if room_id and message:
                 Database().add_message(user_id, room_id, message)
+                socket.emit("newMessage", {'room_id': room_id})
                 return {'status': True}
             else:
                 return send_invalid_form()
@@ -481,6 +484,7 @@ class Play(Resource):
                     room['turn'] = room['turn'] * -1
 
                 Database().update_room_board(room['id'], arr_to_str(board))
+                socket.emit("played", {"room_id": room_id})
 
                 return {'status': moved}
 
